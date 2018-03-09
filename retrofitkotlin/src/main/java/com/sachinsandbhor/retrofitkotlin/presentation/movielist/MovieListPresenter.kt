@@ -11,12 +11,11 @@ class MovieListPresenter(private var view: MovieListContract.MovieListView) :Mov
 
     override fun setView(movieListView: MovieListContract.MovieListView) {
         view = movieListView
-        getMovieList()
     }
 
-    override fun getMovieList() {
+    override fun getMovieList(pageNo : Int) {
         var movieListModel:MovieListContract.MovieListModel = MovieListModel(this)
-        movieListModel.getMovieList()
+        movieListModel.getMovieList(pageNo)
     }
 
     override fun movieListReceived(movieResponse: MovieListResponse) {

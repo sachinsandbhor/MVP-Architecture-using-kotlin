@@ -8,8 +8,11 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
 import com.sachinsandbhor.retrofitkotlin.R
+import com.sachinsandbhor.retrofitkotlin.app.EndlessRecyclerViewScrollListener
 import com.sachinsandbhor.retrofitkotlin.databinding.ActivityMainBinding
 import com.sachinsandbhor.retrofitkotlin.domain.MovieListResponse
+import android.support.v7.widget.GridLayoutManager
+
 
 /**
  * Created by Sachin.Sandbhor on 07-03-2018.
@@ -19,6 +22,9 @@ class MovieListActivity : AppCompatActivity(), MovieListContract.MovieListView{
 
     private lateinit var movieListDataBinding:ActivityMainBinding
     private lateinit var movieListPresenter :MovieListPresenter
+    private lateinit var endlessRecyclerViewScrollListener:EndlessRecyclerViewScrollListener
+    var pageNo:Int = 1
+    lateinit var movieListAdapter:MovieListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,13 +35,32 @@ class MovieListActivity : AppCompatActivity(), MovieListContract.MovieListView{
     }
 
     private fun setupRecyclerView() {
+        movieListAdapter = MovieListAdapter()
+        var linearLayoutManager = LinearLayoutManager(this)
         movieListDataBinding.recyclerview.setHasFixedSize(true)
-        movieListDataBinding.recyclerview.layoutManager = LinearLayoutManager(this) as RecyclerView.LayoutManager?
+        movieListDataBinding.recyclerview.adapter = movieListAdapter
+        movieListDataBinding.recyclerview.layoutManager = linearLayoutManager
+        endlessRecyclerViewScrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                loadMoreData(page)
+            }
+        }
+        movieListDataBinding.recyclerview.addOnScrollListener(endlessRecyclerViewScrollListener)
+    }
+
+    private fun loadMoreData(page: Int) {
+        pageNo = pageNo+1
+        movieListPresenter.getMovieList(pageNo)
     }
 
     override fun setMovie(movieListResponse: MovieListResponse) {
-        movieListDataBinding.recyclerview.visibility = View.VISIBLE
-        movieListDataBinding.recyclerview.adapter = MovieListAdapter(movieListResponse)
+        if(movieListResponse.page > 1 ){
+            movieListAdapter.addAllData(movieListResponse)
+        }else {
+            movieListDataBinding.recyclerview.visibility = View.VISIBLE
+            movieListAdapter.movieList.clear()
+            movieListAdapter.addAllData(movieListResponse)
+        }
     }
 
     override fun startLoading() {
@@ -49,9 +74,14 @@ class MovieListActivity : AppCompatActivity(), MovieListContract.MovieListView{
     override fun onResume() {
         super.onResume()
         movieListPresenter.setView(this)
+        movieListPresenter.getMovieList(1)
     }
 
     override fun onError(message: String?) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
     }
 }

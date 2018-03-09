@@ -19,12 +19,12 @@ interface MovieListContract {
     }
 
     interface MovieListPresenter:MVPInterface.MVPPresenter{
-        fun getMovieList()
+        fun getMovieList(pageNo:Int)
         fun setView(view: MovieListContract.MovieListView)
     }
 
     interface MovieListModel:MVPInterface.MVPModel{
-        fun getMovieList()
+        fun getMovieList(pageNo:Int)
         interface MovieListCallback{
             fun movieListReceived(movieResponse: MovieListResponse)
             fun onError(message: String?)
@@ -33,6 +33,6 @@ interface MovieListContract {
 
     interface apiService{
         @GET("movie/top_rated")
-        fun getRatedMovies(@Query("api_key") apiKey: String): Observable<MovieListResponse>
+        fun getRatedMovies(@Query("api_key") apiKey: String, @Query ("page") page:Int): Observable<MovieListResponse>
     }
 }

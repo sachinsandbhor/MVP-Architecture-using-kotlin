@@ -9,15 +9,10 @@ import com.sachinsandbhor.retrofitkotlin.databinding.MovieListRowBinding
 import com.sachinsandbhor.retrofitkotlin.domain.Movie
 import com.sachinsandbhor.retrofitkotlin.domain.MovieListResponse
 import com.sachinsandbhor.retrofitkotlin.presentation.movielist.MovieListAdapter.MovieViewHolder
-import com.squareup.picasso.Picasso
 
-class MovieListAdapter(movieListResponse: MovieListResponse) : RecyclerView.Adapter<MovieViewHolder>() {
+class MovieListAdapter() : RecyclerView.Adapter<MovieViewHolder>() {
 
-    private var movieList:List<Movie> = ArrayList()
-
-    init {
-        movieList = movieListResponse.results
-    }
+    var movieList: MutableList<Movie> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): MovieViewHolder {
         val layoutInflater = LayoutInflater.from(parent?.context)
@@ -31,6 +26,11 @@ class MovieListAdapter(movieListResponse: MovieListResponse) : RecyclerView.Adap
 
     override fun onBindViewHolder(holder: MovieViewHolder?, position: Int) {
         holder!!.bind(movieList[position])
+    }
+
+    fun addAllData(movieListResponse: MovieListResponse) {
+        movieList.addAll(movieListResponse.results as MutableList<Movie>)
+        notifyDataSetChanged()
     }
 
     inner class MovieViewHolder(var binding: MovieListRowBinding) : RecyclerView.ViewHolder(binding.root) {

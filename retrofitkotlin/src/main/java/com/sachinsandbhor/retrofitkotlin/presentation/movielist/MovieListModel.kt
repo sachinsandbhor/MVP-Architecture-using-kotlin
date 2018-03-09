@@ -21,8 +21,8 @@ class MovieListModel(var movieListModelCallBack: MovieListContract.MovieListMode
                 .create(MovieListContract.apiService::class.java)
     }
 
-    override fun getMovieList() {
-        val movieResponseObservable = apiService.getRatedMovies(BuildConfig.API_KEY)
+    override fun getMovieList(pageNo:Int) {
+        val movieResponseObservable = apiService.getRatedMovies(BuildConfig.API_KEY, pageNo)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
 
