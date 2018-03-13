@@ -16,11 +16,13 @@ interface MovieListContract {
         fun stopLoading()
         fun setMovie(movieListResponse :MovieListResponse)
         fun onError(message:String?)
+        fun navigateUser(id:Int)
     }
 
     interface MovieListPresenter:MVPInterface.MVPPresenter{
         fun getMovieList(pageNo:Int)
         fun setView(view: MovieListContract.MovieListView)
+        fun navigateUser(id:Int)
     }
 
     interface MovieListModel:MVPInterface.MVPModel{

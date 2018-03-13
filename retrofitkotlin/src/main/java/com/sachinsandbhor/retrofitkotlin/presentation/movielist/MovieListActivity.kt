@@ -1,5 +1,6 @@
 package com.sachinsandbhor.retrofitkotlin.presentation.movielist
 
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -11,7 +12,7 @@ import com.sachinsandbhor.retrofitkotlin.R
 import com.sachinsandbhor.retrofitkotlin.app.EndlessRecyclerViewScrollListener
 import com.sachinsandbhor.retrofitkotlin.databinding.ActivityMainBinding
 import com.sachinsandbhor.retrofitkotlin.domain.MovieListResponse
-import android.support.v7.widget.GridLayoutManager
+import com.sachinsandbhor.retrofitkotlin.presentation.moviedetail.MovieDetailActivity
 
 
 /**
@@ -29,13 +30,13 @@ class MovieListActivity : AppCompatActivity(), MovieListContract.MovieListView{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         movieListDataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        setupRecyclerView()
         movieListPresenter = MovieListPresenter(this)
+        setupRecyclerView()
 
     }
 
     private fun setupRecyclerView() {
-        movieListAdapter = MovieListAdapter()
+        movieListAdapter = MovieListAdapter(movieListPresenter)
         var linearLayoutManager = LinearLayoutManager(this)
         movieListDataBinding.recyclerview.setHasFixedSize(true)
         movieListDataBinding.recyclerview.adapter = movieListAdapter
@@ -81,7 +82,10 @@ class MovieListActivity : AppCompatActivity(), MovieListContract.MovieListView{
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
+    override fun navigateUser(id: Int) {
+        val detailPage = Intent(this, MovieDetailActivity::class.java)
+        detailPage.putExtra("ID", id)
+        startActivity(detailPage)
     }
+
 }
